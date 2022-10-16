@@ -1,3 +1,3 @@
-export default defineEventHandler(
-  (event) => `DELETE requested for id ${event.context.params.userId}`
-)
+import { removeUser } from '~/server/controllers/users'
+
+export default defineEventHandler((event) => removeUser(event))

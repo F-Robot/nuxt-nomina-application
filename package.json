@@ -19,5 +19,9 @@
     "nuxt": "3.0.0-rc.11",
     "prettier": "^2.7.1",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "argon2": "^0.30.1",
+    "nanoid": "^4.0.0"
   }
 }

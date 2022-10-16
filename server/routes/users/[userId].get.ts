@@ -1,3 +1,3 @@
-export default defineEventHandler(
-  (event) => `GET requested for id ${event.context.params.userId}`
-)
+import { getUserById } from '~/server/controllers/users'
+
+export default defineEventHandler((event) => getUserById(event))
