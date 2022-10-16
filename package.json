@@ -18,9 +18,12 @@
     "eslint-plugin-vue": "^9.6.0",
     "nuxt": "3.0.0-rc.11",
     "prettier": "^2.7.1",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.4",
+    "vite-plugin-vuetify": "^1.0.0",
+    "vuetify": "^3.0.0-beta.13"
   },
   "dependencies": {
+    "@mdi/font": "^7.0.96",
     "argon2": "^0.30.1",
     "nanoid": "^4.0.0"
   }
