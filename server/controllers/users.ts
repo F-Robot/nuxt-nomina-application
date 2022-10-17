@@ -3,7 +3,7 @@ import service from '~/server/services/users'
 import type { H3Event } from 'h3'
 import type { CreateUserDto, PatchUserDto } from '~/types'
 
-export const listUsers = async () => await service.list(100, 0)
+export const listUsers = async () => await service.list()
 
 export const createUser = async (event: H3Event) => {
   const body = await readBody<CreateUserDto>(event)

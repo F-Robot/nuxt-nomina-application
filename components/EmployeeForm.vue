@@ -8,6 +8,8 @@ interface Emits {
 interface Props {
   role: string
   name: string
+  title: string
+  button: string
   number: string
   loading: boolean
 }
@@ -20,12 +22,11 @@ const emitName = (name: string) => emits('update:name', name)
 const emitNumber = (number: string) => emits('update:number', number)
 
 const color = 'primary'
-const title = 'Registrar Empleado'
 
 const radios = ref([
-  { label: 'Chofer', value: 'chofer' },
-  { label: 'Cargador', value: 'cargador' },
-  { label: 'Auxiliar', value: 'auxiliar' },
+  { label: 'Chofer', value: 'Chofer' },
+  { label: 'Cargador', value: 'Cargador' },
+  { label: 'Auxiliar', value: 'Auxiliar' },
 ])
 </script>
 
@@ -71,7 +72,7 @@ const radios = ref([
         :disabled="loading"
         @click="emitSubmit"
       >
-        {{ title }}
+        {{ button }}
         <VIcon icon="mdi-chevron-right" end />
       </VBtn>
     </VCardActions>

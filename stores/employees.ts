@@ -10,8 +10,17 @@ export const useEmployeesStore = defineStore('employees', () => {
   const createEmployee = async (employee: Employee) => {
     await $fetch('/users', { method: 'post', body: employee })
   }
-  const deleteEmployee = async (employee: Employee) => {
-    await $fetch(`/users/${employee.id}`, { method: 'delete' })
+  const editEmployee = async (employeeId: string, employee: Employee) => {
+    await $fetch(`/users/${employeeId}`, { method: 'PATCH', body: employee })
   }
-  return { employees, fetchEmployeees, createEmployee, deleteEmployee }
+  const deleteEmployee = async (employee: Employee) => {
+    await $fetch(`/users/${employee.id}`, { method: 'DELETE' })
+  }
+  return {
+    employees,
+    editEmployee,
+    createEmployee,
+    deleteEmployee,
+    fetchEmployeees,
+  }
 })

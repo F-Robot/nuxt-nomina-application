@@ -1,33 +1,50 @@
 <script setup lang="ts">
+import EmployeeEditModal from '~/components/EmployeeEditModal.vue'
 import EmployeeForm from '~/components/EmployeeForm.vue'
 import EmployeeList from '~/components/EmployeeList.vue'
 import { useEmployeesStore } from '~/stores/employees'
 import { storeToRefs } from 'pinia'
 
 import type { Ref } from 'vue'
-import { Employee } from '~~/types'
+import type { Employee } from '~/types'
 
 const store = useEmployeesStore()
 
-const { createEmployee, fetchEmployeees, deleteEmployee } = store
+const { createEmployee, fetchEmployeees, deleteEmployee, editEmployee } = store
 const { employees } = storeToRefs(store)
 
-const tabClass = 'mx-auto'
 const tabColor = 'primary'
+const title = 'Registrar Empleado'
+const button = 'Registrar Empleado'
 
 const role = ref('')
 const name = ref('')
 const model = ref('')
 const number = ref('')
 const loading = ref(false)
+const showEditModal = ref(false)
+const showCashModal = ref(false)
 
 const tabs = ref([
   { text: 'Agregar empleado', value: 'add' },
   { text: 'Listar empleado', value: 'list' },
-  { text: 'Editar empleado', value: 'update' },
 ])
 
-const resetForm = (fields: Ref[]) => fields.map((field) => (field.value = null))
+const editedEmployeeId = ref('')
+
+// Dependency Injection to EditModalForm
+
+const roleEdit = ref('')
+const nameEdit = ref('')
+const numberEdit = ref('')
+const loadingEdit = ref(false)
+
+provide('roleEdit', roleEdit)
+provide('nameEdit', nameEdit)
+provide('numberEdit', numberEdit)
+provide('loadingEdit', loadingEdit)
+
+const resetForm = (fields: Ref[]) => fields.map((field) => (field.value = ''))
 
 const submitForm = async () => {
   loading.value = true
@@ -42,18 +59,41 @@ const submitForm = async () => {
   loading.value = false
 }
 
-const clickTrash = async (employee: Employee) => {
+const clickDelete = async (employee: Employee) => {
   await deleteEmployee(employee)
   await fetchEmployeees()
+}
+const clickCash = async (employee: Employee) => {
+  console.log(employee)
+  console.log(showCashModal.value)
+}
+const clickEdit = async (employee: Employee) => {
+  editedEmployeeId.value = employee.id
+  showEditModal.value = true
+}
+const clickEditSubmit = async () => {
+  loadingEdit.value = true
+  await editEmployee(editedEmployeeId.value, {
+    name: nameEdit.value,
+    role: roleEdit.value,
+    number: numberEdit.value,
+  })
+  await fetchEmployeees()
+  loadingEdit.value = false
+  showEditModal.value = false
 }
 </script>
 <template>
   <VContainer fluid>
-    <VTabs v-model="model" fixed-tabs @update:model-value="fetchEmployeees">
+    <VTabs
+      v-model="model"
+      fixed-tabs
+      centered
+      @update:model-value="fetchEmployeees"
+    >
       <VTab
         v-for="(tab, index) in tabs"
         :key="index"
-        :class="tabClass"
         :color="tabColor"
         :value="tab.value"
       >
@@ -67,14 +107,23 @@ const clickTrash = async (employee: Employee) => {
           v-model:name="name"
           v-model:role="role"
           :loading="loading"
+          :button="button"
+          :title="title"
           @submit="submitForm"
         />
       </VWindowItem>
       <VWindowItem :value="tabs[1].value">
-        <EmployeeList :employees="employees" @click-trash="clickTrash" />
-      </VWindowItem>
-      <VWindowItem :value="tabs[2].value">
-        <EmployeeList :employees="employees" />
+        <EmployeeList
+          :employees="employees"
+          @click-edit="clickEdit"
+          @click-cash="clickCash"
+          @click-delete="clickDelete"
+        />
+        <EmployeeEditModal
+          v-model:dialog="showEditModal"
+          :employee-id="editedEmployeeId"
+          @submit="clickEditSubmit"
+        />
       </VWindowItem>
     </VWindow>
   </VContainer>
