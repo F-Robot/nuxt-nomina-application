@@ -1,9 +1,20 @@
+<script setup lang="ts">
+import TheNavbar from '~/components/TheNavbar.vue'
+import TheSidebar from '~/components/TheSidebar.vue'
+</script>
+
 <template>
-  <div>
-    <v-card class="mx-auto" width="400" prepend-icon="mdi-home">
-      <template #title> Hello from Vuetify! </template>
-      <v-card-text> When you see this inside a card, it worked! </v-card-text>
-    </v-card>
-    <NuxtWelcome />
-  </div>
+  <VApp>
+    <TheNavbar />
+    <TheSidebar />
+    <VMain>
+      <NuxtPage />
+    </VMain>
+  </VApp>
 </template>
+
+<style scoped>
+.v-main {
+  background-color: #f8fafb;
+}
+</style>
