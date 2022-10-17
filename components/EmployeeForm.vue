@@ -1,40 +1,58 @@
 <script setup lang="ts">
-const label = 'Rol'
-const maxWidth = 334
+interface Emits {
+  (e: 'submit'): void
+  (e: 'update:role', role: string): void
+  (e: 'update:name', name: string): void
+  (e: 'update:number', number: string): void
+}
+interface Props {
+  role: string
+  name: string
+  number: string
+  loading: boolean
+}
+const emits = defineEmits<Emits>()
+const props = defineProps<Props>()
+
+const emitSubmit = () => emits('submit')
+const emitRole = (role: string) => emits('update:role', role)
+const emitName = (name: string) => emits('update:name', name)
+const emitNumber = (number: string) => emits('update:number', number)
+
 const color = 'primary'
-const icon = 'mdi-chevron-right'
 const title = 'Registrar Empleado'
-
-const cardClass = 'mx-auto my-1'
-const titleClass = 'text-primary'
-
-const role = ref('')
-const models = reactive({ name: '', number: '' })
 
 const radios = ref([
   { label: 'Chofer', value: 'chofer' },
   { label: 'Cargador', value: 'cargador' },
   { label: 'Auxiliar', value: 'auxiliar' },
 ])
-const fields = ref([
-  { label: 'Nombre', model: 'name' },
-  { label: 'Numero', model: 'number' },
-])
 </script>
 
 <template>
-  <VCard :class="cardClass" :max-width="maxWidth">
-    <VCardTitle :class="titleClass">{{ title }}</VCardTitle>
+  <VCard class="mx-auto my-1" max-width="334">
+    <VCardTitle class="text-primary">{{ title }}</VCardTitle>
     <VContainer>
       <VTextField
-        v-for="(field, index) in fields"
-        :key="index"
-        v-model="models[field.model]"
         :color="color"
+        label="Numero"
         variant="outlined"
-        :label="field.label"
+        :value="props.number"
+        @input="emitNumber($event.target.value)"
       />
-      <VRadioGroup v-model="role" :label="label" inline>
+      <VTextField
+        :color="color"
+        label="Nombre"
+        variant="outlined"
+        :value="props.name"
+        @input="emitName($event.target.value)"
+      />
+      <VRadioGroup
+        inline
+        label="Rol"
+        :value="props.role"
+        @input="emitRole($event.target.value)"
+      >
         <VRadio
           v-for="(radio, index) in radios"
           :key="index"
@@ -47,7 +65,15 @@ const fields = ref([
     <VDivider />
     <VCardActions>
       <VSpacer />
-      <VBtn :color="color">{{ title }}<VIcon :icon="icon" end /></VBtn>
+      <VBtn
+        :color="color"
+        :loading="loading"
+        :disabled="loading"
+        @click="emitSubmit"
+      >
+        {{ title }}
+        <VIcon icon="mdi-chevron-right" end />
+      </VBtn>
     </VCardActions>
   </VCard>
 </template>

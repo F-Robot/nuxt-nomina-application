@@ -1,6 +1,5 @@
 import vuetify from 'vite-plugin-vuetify'
 
-// https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   css: ['vuetify/styles'],
   vite: {
@@ -8,7 +7,14 @@ export default defineNuxtConfig({
       noExternal: ['vuetify'],
     },
   },
+  // ... other options
   modules: [
+    [
+      '@pinia/nuxt',
+      {
+        autoImports: ['defineStore'],
+      },
+    ],
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         config.plugins.push(vuetify())
