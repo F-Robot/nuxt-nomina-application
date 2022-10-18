@@ -36,6 +36,5 @@ export const usePayroll = (role: Role, deliveries = 0) => {
     vouchersPerMonth,
     moneyPerDeliveries,
     moneyPerMonthWithTaxes,
-    hoursPerDay: HOURS_PER_DAY,
   }
 }

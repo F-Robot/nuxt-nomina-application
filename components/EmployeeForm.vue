@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { nameRules, numberRules, radioRules } from '~/utils/validations'
 interface Emits {
   (e: 'submit'): void
   (e: 'update:role', role: string): void
@@ -22,46 +23,56 @@ const emitName = (name: string) => emits('update:name', name)
 const emitNumber = (number: string) => emits('update:number', number)
 
 const color = 'primary'
-
 const radios = ref([
   { label: 'Chofer', value: 'Chofer' },
   { label: 'Cargador', value: 'Cargador' },
   { label: 'Auxiliar', value: 'Auxiliar' },
 ])
+
+const form = ref(null)
+const isFormValid = ref(false)
+defineExpose({ resetForm: () => form.value.reset() })
 </script>
 
 <template>
   <VCard class="mx-auto my-1" max-width="334">
     <VCardTitle class="text-primary">{{ title }}</VCardTitle>
     <VContainer>
-      <VTextField
-        :color="color"
-        label="Numero"
-        variant="outlined"
-        :value="props.number"
-        @input="emitNumber($event.target.value)"
-      />
-      <VTextField
-        :color="color"
-        label="Nombre"
-        variant="outlined"
-        :value="props.name"
-        @input="emitName($event.target.value)"
-      />
-      <VRadioGroup
-        inline
-        label="Rol"
-        :value="props.role"
-        @input="emitRole($event.target.value)"
-      >
-        <VRadio
-          v-for="(radio, index) in radios"
-          :key="index"
+      <VForm ref="form" v-model="isFormValid">
+        <VTextField
+          label="Numero"
           :color="color"
-          :label="radio.label"
-          :value="radio.value"
+          :rules="numberRules"
+          variant="outlined"
+          :value="props.number"
+          @input="emitNumber($event.target.value)"
         />
-      </VRadioGroup>
+        <VTextField
+          class="mt-2"
+          :color="color"
+          label="Nombre"
+          :rules="nameRules"
+          variant="outlined"
+          :value="props.name"
+          @input="emitName($event.target.value)"
+        />
+        <VRadioGroup
+          inline
+          class="mt-2"
+          label="Rol"
+          :rules="radioRules"
+          :value="props.role"
+          @input="emitRole($event.target.value)"
+        >
+          <VRadio
+            v-for="(radio, index) in radios"
+            :key="index"
+            :color="color"
+            :label="radio.label"
+            :value="radio.value"
+          />
+        </VRadioGroup>
+      </VForm>
     </VContainer>
     <VDivider />
     <VCardActions>
@@ -69,7 +80,7 @@ const radios = ref([
       <VBtn
         :color="color"
         :loading="loading"
-        :disabled="loading"
+        :disabled="!isFormValid"
         @click="emitSubmit"
       >
         {{ button }}

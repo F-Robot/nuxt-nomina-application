@@ -7,8 +7,7 @@ import EmployeeList from '~/components/EmployeeList.vue'
 import { useEmployeesStore } from '~/stores/employees'
 import { storeToRefs } from 'pinia'
 
-import type { Ref } from 'vue'
-import { GetEmployeeDto, Role } from '~/types'
+import type { GetEmployeeDto, Role } from '~/types'
 
 const store = useEmployeesStore()
 
@@ -53,8 +52,6 @@ const loadingDelivery = ref(false)
 provide('delivery', delivery)
 provide('loadingDelivery', loadingDelivery)
 
-const resetForm = (fields: Ref[]) => fields.map((field) => (field.value = ''))
-
 const formSubmit = async () => {
   loading.value = true
   if (role.value === '') return
@@ -64,7 +61,7 @@ const formSubmit = async () => {
     number: number.value,
   })
   await fetchEmployeees()
-  resetForm([name, number])
+  clearForm()
   model.value = 'list'
   loading.value = false
 }
@@ -85,7 +82,6 @@ const editDelivery = async () => {
     deliveries: delivery.value,
   })
   await fetchEmployeees()
-  delivery.value = ''
   loadingDelivery.value = false
   showDeliveryModal.value = false
 }
@@ -107,6 +103,8 @@ const clickDelivery = async (employee: GetEmployeeDto) => {
   selectedEmployee.value = employee
   showDeliveryModal.value = true
 }
+const form = ref<InstanceType<typeof EmployeeForm> | null>(null)
+const clearForm = () => form.value.resetForm()
 </script>
 <template>
   <VContainer fluid>
@@ -128,6 +126,7 @@ const clickDelivery = async (employee: GetEmployeeDto) => {
     <VWindow v-model="model" class="mt-3">
       <VWindowItem :value="tabs[0].value">
         <EmployeeForm
+          ref="form"
           v-model:number="number"
           v-model:name="name"
           v-model:role="role"

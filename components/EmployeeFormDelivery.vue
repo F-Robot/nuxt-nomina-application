@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { numberRules } from '~/utils/validations'
 interface Emits {
   (e: 'submit'): void
   (e: 'update:delivery', delivery: string): void
@@ -17,6 +18,10 @@ const emitSubmit = () => emits('submit')
 const emitName = (delivery: string) => emits('update:delivery', delivery)
 
 const color = 'primary'
+
+const form = ref(null)
+const isFormValid = ref(false)
+defineExpose({ resetForm: () => form.value.reset() })
 </script>
 
 <template>
@@ -26,13 +31,16 @@ const color = 'primary'
       Envios actuales: {{ deliveries }}
     </VCardSubtitle>
     <VContainer>
-      <VTextField
-        :color="color"
-        label="Envios"
-        variant="outlined"
-        :value="props.delivery"
-        @input="emitName($event.target.value)"
-      />
+      <VForm ref="form" v-model="isFormValid">
+        <VTextField
+          :color="color"
+          label="Envios"
+          variant="outlined"
+          :rules="numberRules"
+          :value="props.delivery"
+          @input="emitName($event.target.value)"
+        />
+      </VForm>
     </VContainer>
     <VDivider />
     <VCardActions>
@@ -40,7 +48,7 @@ const color = 'primary'
       <VBtn
         :color="color"
         :loading="loading"
-        :disabled="loading"
+        :disabled="!isFormValid"
         @click="emitSubmit"
       >
         {{ button }}

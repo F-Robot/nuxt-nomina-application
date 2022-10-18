@@ -15,7 +15,10 @@ interface Props {
 const emits = defineEmits<Emits>()
 const props = defineProps<Props>()
 
-const emitSubmit = () => emits('submit', props.employee)
+const emitSubmit = () => {
+  clearForm()
+  emits('submit', props.employee)
+}
 const emitShowModal = (showModal: boolean) => emits('update:dialog', showModal)
 
 const title = 'Actualizar Envios'
@@ -23,11 +26,15 @@ const title = 'Actualizar Envios'
 // Dependency Injection from Index
 const delivery = inject<Ref<string>>('delivery') ?? ref('')
 const loading = inject<Ref<boolean>>('loadingDelivery') ?? ref(false)
+
+const form = ref<InstanceType<typeof EmployeeFormDelivery> | null>(null)
+const clearForm = () => form.value.resetForm()
 </script>
 
 <template>
   <VDialog :model-value="dialog" @click:outside="emitShowModal(false)">
     <EmployeeFormDelivery
+      ref="form"
       v-model:delivery="delivery"
       :deliveries="employee.deliveries"
       :loading="loading"

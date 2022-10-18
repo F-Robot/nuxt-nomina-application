@@ -7,12 +7,11 @@ interface Props {
 const props = defineProps<Props>()
 
 const fields = {
-  moneyPerMonth: 'Dinero Bruto por mes:',
-  taxesPerMonth: 'IVA(ISR) por mes:',
-  vouchersPerMonth: 'Cupones por mes:',
-  moneyPerMonthWithTaxes: 'Dinero Neto por mes:',
-  moneyPerDeliveries: 'Dinero por entragas:',
-  hoursPerDay: 'Horas por dia:',
+  vouchersPerMonth: '1. Cupones por mes:',
+  moneyPerDeliveries: '2. Dinero por entragas:',
+  moneyPerMonth: '3. Dinero Bruto por mes:',
+  taxesPerMonth: '4. IVA(ISR) por mes:',
+  moneyPerMonthWithTaxes: '5. Dinero Neto por mes:',
 }
 const getCurrency = (key: string, number: number) => {
   return key !== 'hoursPerDay' ? useCurrency(number) : number
@@ -23,13 +22,19 @@ const payrollFields = computed(() =>
     currency: getCurrency(key, props.employee.payroll[key]),
   }))
 )
+const payrollFieldsSorted = computed(() =>
+  payrollFields.value.sort((a, b) => a.payroll[0] - b.payroll[0])
+)
 </script>
 <template>
   <VCard class="pa-10" max-width="544">
     <VCardTitle class="text-primary">Nomina de Empleado</VCardTitle>
+    <VCardSubtitle class="text-primary">
+      Entragas: {{ employee.deliveries }}
+    </VCardSubtitle>
     <VCardText>
       <VList lines="two">
-        <VListItem v-for="field in payrollFields" :key="field.payroll">
+        <VListItem v-for="field in payrollFieldsSorted" :key="field.payroll">
           <VListItemTitle>{{ field.payroll }}</VListItemTitle>
           <VListItemSubtitle>{{ field.currency }}</VListItemSubtitle>
         </VListItem>
