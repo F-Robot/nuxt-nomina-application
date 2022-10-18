@@ -29,19 +29,18 @@ npm run dev
 
 ## Controlador de versiones
   - Git/Github
+
 ## Lenguages de programacion
   - Frontend: VueJS
   - Backend: Typescript
+
 ## Framework
   - Nuxt 3
+
 ## Arquitectura
   - Server-side rendering
-## Herramientas
-  ### IDE
-    - Nvim
-  ## Linter
-    - Eslint
-  ## Formatter
-    - Prettier
 
- 
+## Herramientas
+  - IDE: Nvim
+  - Linter: Eslint
+  - Formatter: Prettier
