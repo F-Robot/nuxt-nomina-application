@@ -11,11 +11,16 @@ const fields = {
   taxesPerMonth: 'IVA(ISR) por mes:',
   vouchersPerMonth: 'Cupones por mes:',
   moneyPerMonthWithTaxes: 'Dinero Neto por mes:',
+  moneyPerDeliveries: 'Dinero por entragas:',
+  hoursPerDay: 'Horas por dia:',
+}
+const getCurrency = (key: string, number: number) => {
+  return key !== 'hoursPerDay' ? useCurrency(number) : number
 }
 const payrollFields = computed(() =>
   Object.keys(props.employee.payroll).map((key) => ({
     payroll: fields[key],
-    currency: useCurrency(props.employee.payroll[key]),
+    currency: getCurrency(key, props.employee.payroll[key]),
   }))
 )
 </script>
@@ -24,10 +29,6 @@ const payrollFields = computed(() =>
     <VCardTitle class="text-primary">Nomina de Empleado</VCardTitle>
     <VCardText>
       <VList lines="two">
-        <VListItem>
-          <VListItemTitle>Entregas por mes:</VListItemTitle>
-          <VListItemSubtitle>{{ employee.deliveries }}</VListItemSubtitle>
-        </VListItem>
         <VListItem v-for="field in payrollFields" :key="field.payroll">
           <VListItemTitle>{{ field.payroll }}</VListItemTitle>
           <VListItemSubtitle>{{ field.currency }}</VListItemSubtitle>

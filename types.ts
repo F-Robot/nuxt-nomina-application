@@ -3,7 +3,9 @@ export type Role = 'Chofer' | 'Auxiliar' | 'Cargador'
 export interface Payroll {
   moneyPerMonth: number
   taxesPerMonth: number
+  hoursPerDay: number
   vouchersPerMonth: number
+  moneyPerDeliveries: number
   moneyPerMonthWithTaxes: number
 }
 
