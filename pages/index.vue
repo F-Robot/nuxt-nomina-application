@@ -8,6 +8,7 @@ import { useEmployeesStore } from '~/stores/employees'
 import { storeToRefs } from 'pinia'
 
 import type { GetEmployeeDto, Role } from '~/types'
+type Form = InstanceType<typeof EmployeeForm> | null
 
 const store = useEmployeesStore()
 
@@ -20,8 +21,8 @@ const button = 'Registrar Empleado'
 
 const role = ref<Role | ''>('')
 const name = ref('')
-const model = ref('')
 const number = ref('')
+const tabModel = ref('')
 const loading = ref(false)
 const showEditModal = ref(false)
 const showPayrollModal = ref(false)
@@ -62,7 +63,7 @@ const formSubmit = async () => {
   })
   await fetchEmployeees()
   clearForm()
-  model.value = 'list'
+  tabModel.value = 'list'
   loading.value = false
 }
 const editSubmit = async () => {
@@ -103,13 +104,17 @@ const clickDelivery = async (employee: GetEmployeeDto) => {
   selectedEmployee.value = employee
   showDeliveryModal.value = true
 }
-const form = ref<InstanceType<typeof EmployeeForm> | null>(null)
-const clearForm = () => form.value.resetForm()
+const form = ref<Form>(null)
+const clearForm = () => {
+  name.value = ''
+  number.value = ''
+  form.value.resetForm()
+}
 </script>
 <template>
   <VContainer fluid>
     <VTabs
-      v-model="model"
+      v-model="tabModel"
       fixed-tabs
       centered
       @update:model-value="fetchEmployeees"
@@ -123,7 +128,7 @@ const clearForm = () => form.value.resetForm()
         {{ tab.text }}
       </VTab>
     </VTabs>
-    <VWindow v-model="model" class="mt-3">
+    <VWindow v-model="tabModel" class="mt-3">
       <VWindowItem :value="tabs[0].value">
         <EmployeeForm
           ref="form"
