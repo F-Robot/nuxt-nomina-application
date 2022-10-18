@@ -25,18 +25,23 @@ Start the development server on http://localhost:3000
 npm run dev
 ```
 
-## Production
+# Directivas
 
-Build the application for production:
+## Controlador de versiones
+  - Git/Github
+## Lenguages de programacion
+  - Frontend: VueJS
+  - Backend: Typescript
+## Framework
+  - Nuxt 3
+## Arquitectura
+  - Server-side rendering
+## Herramientas
+  ### IDE
+    - Nvim
+  ## Linter
+    - Eslint
+  ## Formatter
+    - Prettier
 
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+ 
