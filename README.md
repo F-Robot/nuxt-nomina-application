@@ -25,18 +25,25 @@ Start the development server on http://localhost:3000
 npm run dev
 ```
 
-## Production
+# Directivas
 
-Build the application for production:
+## Controlador de versiones
+  - Git/Github
 
-```bash
-npm run build
-```
+## Lenguages de programacion
+  - Frontend: VueJS
+  - Backend: Typescript
 
-Locally preview production build:
+## Framework
+  - Nuxt 3
 
-```bash
-npm run preview
-```
+## Arquitectura
+  - Server-side rendering
 
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+## Herramientas
+  - IDE: Nvim
+  - Linter: Eslint
+  - Formatter: Prettier
+  
+# Comentarios Finales
+La forma de instalar el proyecto es muy sencillo, se clona el repositorio de forma local, se instalan las dependencias del package.json y se corre el comando mencionado arriba. Segui todos los requerimientos que solicitaba el documento, unicamente, por falta de tiempo no alcance a integrar la base de datos, pensaba agregar Postgress o MongoDB, por lo que utilice un Array para almacenar a los usuarios nuevos
