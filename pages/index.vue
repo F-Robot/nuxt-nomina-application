@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import EmployeeDeliveryModal from '~/components/EmployeeDeliveryModal.vue'
+import EmployeePayrollModal from '~/components/EmployeePayrollModal.vue'
 import EmployeeEditModal from '~/components/EmployeeEditModal.vue'
 import EmployeeForm from '~/components/EmployeeForm.vue'
 import EmployeeList from '~/components/EmployeeList.vue'
@@ -6,7 +8,7 @@ import { useEmployeesStore } from '~/stores/employees'
 import { storeToRefs } from 'pinia'
 
 import type { Ref } from 'vue'
-import type { Employee } from '~/types'
+import { GetEmployeeDto, Role } from '~/types'
 
 const store = useEmployeesStore()
 
@@ -17,23 +19,23 @@ const tabColor = 'primary'
 const title = 'Registrar Empleado'
 const button = 'Registrar Empleado'
 
-const role = ref('')
+const role = ref<Role | ''>('')
 const name = ref('')
 const model = ref('')
 const number = ref('')
 const loading = ref(false)
 const showEditModal = ref(false)
-const showCashModal = ref(false)
+const showPayrollModal = ref(false)
+const showDeliveryModal = ref(false)
 
 const tabs = ref([
   { text: 'Agregar empleado', value: 'add' },
   { text: 'Listar empleado', value: 'list' },
 ])
 
-const editedEmployeeId = ref('')
+const selectedEmployee = ref<GetEmployeeDto>()
 
 // Dependency Injection to EditModalForm
-
 const roleEdit = ref('')
 const nameEdit = ref('')
 const numberEdit = ref('')
@@ -44,10 +46,18 @@ provide('nameEdit', nameEdit)
 provide('numberEdit', numberEdit)
 provide('loadingEdit', loadingEdit)
 
+// Dependency Injection to DeliveryModalForm
+const delivery = ref('')
+const loadingDelivery = ref(false)
+
+provide('delivery', delivery)
+provide('loadingDelivery', loadingDelivery)
+
 const resetForm = (fields: Ref[]) => fields.map((field) => (field.value = ''))
 
-const submitForm = async () => {
+const formSubmit = async () => {
   loading.value = true
+  if (role.value === '') return
   await createEmployee({
     role: role.value,
     name: name.value,
@@ -58,22 +68,9 @@ const submitForm = async () => {
   model.value = 'list'
   loading.value = false
 }
-
-const clickDelete = async (employee: Employee) => {
-  await deleteEmployee(employee)
-  await fetchEmployeees()
-}
-const clickCash = async (employee: Employee) => {
-  console.log(employee)
-  console.log(showCashModal.value)
-}
-const clickEdit = async (employee: Employee) => {
-  editedEmployeeId.value = employee.id
-  showEditModal.value = true
-}
-const clickEditSubmit = async () => {
+const editSubmit = async () => {
   loadingEdit.value = true
-  await editEmployee(editedEmployeeId.value, {
+  await editEmployee(selectedEmployee.value.id, {
     name: nameEdit.value,
     role: roleEdit.value,
     number: numberEdit.value,
@@ -81,6 +78,34 @@ const clickEditSubmit = async () => {
   await fetchEmployeees()
   loadingEdit.value = false
   showEditModal.value = false
+}
+const editDelivery = async () => {
+  loadingDelivery.value = true
+  await editEmployee(selectedEmployee.value.id, {
+    deliveries: delivery.value,
+  })
+  await fetchEmployeees()
+  delivery.value = ''
+  loadingDelivery.value = false
+  showDeliveryModal.value = false
+}
+const deleteSubmit = async (employee: GetEmployeeDto) => {
+  await deleteEmployee(employee.id)
+  await fetchEmployeees()
+}
+const closePayrollModal = async () => (showPayrollModal.value = false)
+
+const clickCash = async (employee: GetEmployeeDto) => {
+  selectedEmployee.value = employee
+  showPayrollModal.value = true
+}
+const clickEdit = async (employee: GetEmployeeDto) => {
+  selectedEmployee.value = employee
+  showEditModal.value = true
+}
+const clickDelivery = async (employee: GetEmployeeDto) => {
+  selectedEmployee.value = employee
+  showDeliveryModal.value = true
 }
 </script>
 <template>
@@ -109,7 +134,7 @@ const clickEditSubmit = async () => {
           :loading="loading"
           :button="button"
           :title="title"
-          @submit="submitForm"
+          @submit="formSubmit"
         />
       </VWindowItem>
       <VWindowItem :value="tabs[1].value">
@@ -117,12 +142,23 @@ const clickEditSubmit = async () => {
           :employees="employees"
           @click-edit="clickEdit"
           @click-cash="clickCash"
-          @click-delete="clickDelete"
+          @click-delete="deleteSubmit"
+          @click-delivery="clickDelivery"
+        />
+        <EmployeePayrollModal
+          v-model:dialog="showPayrollModal"
+          :employee="selectedEmployee"
+          @submit="closePayrollModal"
+        />
+        <EmployeeDeliveryModal
+          v-model:dialog="showDeliveryModal"
+          :employee="selectedEmployee"
+          @submit="editDelivery"
         />
         <EmployeeEditModal
           v-model:dialog="showEditModal"
-          :employee-id="editedEmployeeId"
-          @submit="clickEditSubmit"
+          :employee="selectedEmployee"
+          @submit="editSubmit"
         />
       </VWindowItem>
     </VWindow>
