@@ -16,6 +16,14 @@ npm install
 # pnpm
 pnpm install --shamefully-hoist
 ```
+## Env 
+```bash
+DB_USER = db_user
+DB_PASSWORD = db_password
+DB_HOST = db_host
+DATABASE = database
+DB_PORT = db_port
+```
 
 ## Development Server
 
