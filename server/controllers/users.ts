@@ -11,10 +11,10 @@ export const createUser = async (event: H3Event) => {
 }
 export const patchUser = async (event: H3Event) => {
   const body = await readBody<PatchUserDto>(event)
-  return await service.patchById(event.context.params.userId, body)
+  return { id: await service.patchById(event.context.params.userId, body) }
 }
 export const removeUser = async (event: H3Event) => {
-  return await service.deleteById(event.context.params.userId)
+  return { id: await service.deleteById(event.context.params.userId) }
 }
 export const getUserById = async (event: H3Event) => {
   return await service.readById(event.context.params.userId)

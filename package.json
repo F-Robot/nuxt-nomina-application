@@ -8,6 +8,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@types/pg": "^8.6.5",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
     "@typescript-eslint/parser": "^5.40.0",
     "@vue/eslint-config-standard": "^8.0.1",
@@ -26,7 +27,9 @@
     "@mdi/font": "^7.0.96",
     "@pinia/nuxt": "^0.4.3",
     "argon2": "^0.30.1",
+    "dotenv": "^16.0.3",
     "nanoid": "^4.0.0",
+    "pg": "^8.8.0",
     "pinia": "^2.0.23"
   }
 }

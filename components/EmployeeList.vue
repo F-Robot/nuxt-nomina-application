@@ -1,32 +1,34 @@
 <script setup lang="ts">
 import EmployeeAvatar from '~/components/EmployeeAvatar.vue'
 import DeliveryIcon from '~/components/DeliveryIcon.vue'
+import CalendarIcon from '~/components/CalendarIcon.vue'
 import PencilIcon from '~/components/PencilIcon.vue'
 import TrashIcon from '~/components/TrashIcon.vue'
 import CashIcon from '~/components/CashIcon.vue'
 
-import type { GetEmployeeDto } from '~/types'
+import type { GetUserDto } from '~/types'
 
 interface Emits {
-  (e: 'clickDelivery', employee: GetEmployeeDto): void
-  (e: 'clickDelete', employee: GetEmployeeDto): void
-  (e: 'clickEdit', employee: GetEmployeeDto): void
-  (e: 'clickCash', employee: GetEmployeeDto): void
+  (e: 'clickDelivery', employee: GetUserDto): void
+  (e: 'clickCalendar', employee: GetUserDto): void
+  (e: 'clickDelete', employee: GetUserDto): void
+  (e: 'clickEdit', employee: GetUserDto): void
+  (e: 'clickCash', employee: GetUserDto): void
 }
 interface Props {
-  employees: GetEmployeeDto[]
+  employees: GetUserDto[]
 }
 const emit = defineEmits<Emits>()
 const props = defineProps<Props>()
 
-const clickEdit = (employee: GetEmployeeDto) => emit('clickEdit', employee)
-const clickCash = (employee: GetEmployeeDto) => emit('clickCash', employee)
-const clickDelete = (employee: GetEmployeeDto) => emit('clickDelete', employee)
-const clickDelivery = (employee: GetEmployeeDto) =>
-  emit('clickDelivery', employee)
+const clickEdit = (employee: GetUserDto) => emit('clickEdit', employee)
+const clickCash = (employee: GetUserDto) => emit('clickCash', employee)
+const clickDelete = (employee: GetUserDto) => emit('clickDelete', employee)
+const clickCalendar = (employee: GetUserDto) => emit('clickCalendar', employee)
+const clickDelivery = (employee: GetUserDto) => emit('clickDelivery', employee)
 
 const hasEmployees = computed(() => props.employees.length !== 0)
-const getTitle = (employee: GetEmployeeDto) =>
+const getTitle = (employee: GetUserDto) =>
   `${employee.name} #${employee.number}`
 </script>
 <template>
@@ -44,6 +46,7 @@ const getTitle = (employee: GetEmployeeDto) =>
         <template #append>
           <CashIcon @click="clickCash(employee)" />
           <DeliveryIcon @click="clickDelivery(employee)" />
+          <CalendarIcon @click="clickCalendar(employee)" />
           <PencilIcon @click="clickEdit(employee)" />
           <TrashIcon @click="clickDelete(employee)" />
         </template>

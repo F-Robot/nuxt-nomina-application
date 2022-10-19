@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { GetEmployeeDto } from '~/types'
+import { GetUserDto } from '~/types'
 
 interface Props {
-  employee: GetEmployeeDto
+  employee: GetUserDto
 }
 const props = defineProps<Props>()
 
 const fields = {
+  workedHoursPerMonth: '0. Horas trabajadas del mes:',
   vouchersPerMonth: '1. Cupones por mes:',
-  moneyPerDeliveries: '2. Dinero por entragas:',
+  moneyPerDeliveries: '2. Dinero por entragas del mes:',
   moneyPerMonth: '3. Dinero Bruto por mes:',
   taxesPerMonth: '4. IVA(ISR) por mes:',
   moneyPerMonthWithTaxes: '5. Dinero Neto por mes:',
 }
 const getCurrency = (key: string, number: number) => {
+  if (key === 'workedHoursPerMonth') return `${number} Horas`
   return key !== 'hoursPerDay' ? useCurrency(number) : number
 }
 const payrollFields = computed(() =>

@@ -2,15 +2,15 @@
 import EmployeeFormDelivery from '~/components/EmployeeFormDelivery.vue'
 
 import type { Ref } from 'vue'
-import type { GetEmployeeDto } from '~/types'
+import type { GetUserDto } from '~/types'
 
 interface Emits {
-  (e: 'submit', employee: GetEmployeeDto): void
+  (e: 'submit', employee: GetUserDto): void
   (e: 'update:dialog', ev: boolean): void
 }
 interface Props {
   dialog: boolean
-  employee: GetEmployeeDto
+  employee: GetUserDto
 }
 const emits = defineEmits<Emits>()
 const props = defineProps<Props>()

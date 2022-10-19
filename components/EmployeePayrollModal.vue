@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import EmployeePayrollCard from '~/components/EmployeePayrollCard.vue'
-import { GetEmployeeDto } from '~/types'
+import { GetUserDto } from '~/types'
 
 interface Props {
   dialog: boolean
-  employee: GetEmployeeDto
+  employee: GetUserDto
 }
 interface Emits {
   (e: 'update:dialog', ev: boolean): void

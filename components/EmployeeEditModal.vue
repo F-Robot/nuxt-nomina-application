@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import EmployeeForm from '~/components/EmployeeForm.vue'
 import type { Ref } from 'vue'
-import { GetEmployeeDto } from '~~/types'
+import { GetUserDto } from '~~/types'
 
 interface Emits {
-  (e: 'submit', employee: GetEmployeeDto): void
+  (e: 'submit', employee: GetUserDto): void
   (e: 'update:dialog', ev: boolean): void
 }
 interface Props {
   dialog: boolean
-  employee: GetEmployeeDto
+  employee: GetUserDto
 }
 const emits = defineEmits<Emits>()
 const props = defineProps<Props>()

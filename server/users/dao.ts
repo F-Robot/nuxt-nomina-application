@@ -1,46 +1,93 @@
-import { nanoid } from 'nanoid'
-import { usePayroll } from '~/composables/usePayroll'
-import type { CreateUserDto, PatchUserDto } from '~/types'
+import pg from '~/server/services/postgresql'
+import { useMonthsAgo } from '~/composables/useMonthsAgo'
+import {
+  parseToInt,
+  parseToGetUserDto,
+  parseToEmployeeInformation,
+} from '~/utils/types'
+import {
+  CREATE_EMPLOYEE_TABLE_QUERY,
+  DELETE_EMPLOYEE_TABLE_QUERY,
+  INSERT_EMPLOYEE_TABLE_QUERY,
+  SELECT_EMPLOYEE_BY_ID_QUERY,
+  SELECT_EMPLOYEE_TABLE_QUERY,
+  UPDATE_EMPLOYEE_DATE_TABLE_QUERY,
+  UPDATE_EMPLOYEE_DELIVERIES_TABLE_QUERY,
+  UPDATE_EMPLOYEE_IFORMATION_TABLE_QUERY,
+} from '~/constants'
+import type {
+  UserDto,
+  GetUserDto,
+  PatchUserDto,
+  CreateUserDto,
+  InsertUserDto,
+  RemoveUserDto,
+  SelectUserDto,
+  UpdateUserDeliveriesDto,
+  UpdateUserInformationDto,
+  UpdateUserMonthsDto,
+} from '~/types'
 
 class UsersDao {
-  users: Array<CreateUserDto> = []
+  constructor() {
+    pg.query(CREATE_EMPLOYEE_TABLE_QUERY)
+  }
+  async getUsers(): Promise<GetUserDto[]> {
+    const res = await pg.query<UserDto>(SELECT_EMPLOYEE_TABLE_QUERY)
+    const users = parseToGetUserDto(res.rows)
+    return users
+  }
+  async getUserById(userId: number): Promise<GetUserDto> {
+    userId = parseToInt(userId)
+    const id: SelectUserDto = [userId]
+    const res = await pg.query<UserDto>(SELECT_EMPLOYEE_BY_ID_QUERY, id)
+    const users = parseToGetUserDto(res.rows)
+    return users[0]
+  }
+  async addUser(user: CreateUserDto) {
+    user.number = parseToInt(user.number)
+    const newUser: InsertUserDto = [user.number, user.role, user.name]
+    const res = await pg.query<UserDto>(INSERT_EMPLOYEE_TABLE_QUERY, newUser)
+    return res.rows[0].id
+  }
+  async removeUserById(userId: number) {
+    userId = parseToInt(userId)
+    const id: RemoveUserDto = [userId]
+    const res = await pg.query<UserDto>(DELETE_EMPLOYEE_TABLE_QUERY, id)
+    return res.rows[0].id
+  }
+  async patchUserById(userId: number, user: PatchUserDto) {
+    userId && (userId = parseToInt(userId))
 
-  async getUsers(): Promise<CreateUserDto[]> {
-    return this.users
-  }
-  async addUser(user: CreateUserDto): Promise<string> {
-    user.id = nanoid()
-    user.deliveries = 0
-    user.createdAt = Date()
-    user.payroll = usePayroll(user.role, user.deliveries)
+    if (typeof user.months !== 'undefined') {
+      user.months = parseToInt(user.months)
+      const createdAt = (await this.getUserById(userId)).createdat
+      const workedDate = useMonthsAgo(user.months, createdAt)
+      const date: UpdateUserMonthsDto = [userId, workedDate]
+      await this.updateMonths(date)
+      return userId
+    }
 
-    this.users.push(user)
-    return user.id
-  }
-  async removeUserById(userId: string) {
-    this.users.splice(this.getUserIndexById(userId), 1)
-    return `${userId} removed`
-  }
-  async patchUserById(userId: string, user: PatchUserDto) {
-    const userIndex = this.getUserIndexById(userId)
-    const currentUser = this.users[userIndex]
+    if (typeof user.deliveries !== 'undefined') {
+      user.deliveries = parseToInt(user.deliveries)
+      const deliveries: UpdateUserDeliveriesDto = [userId, user.deliveries]
+      await this.updateDelivery(deliveries)
+      return userId
+    }
 
-    this.setUserFields(userId, user, ['name', 'role', 'number', 'deliveries'])
-    currentUser.payroll = usePayroll(currentUser.role, user.deliveries)
-
-    this.users.splice(userIndex, 1, currentUser)
-    return `${currentUser.id} patched`
+    user.number && (user.number = parseToInt(user.number))
+    const information = parseToEmployeeInformation(userId, user)
+    await this.updateInformation(information)
+    return userId
   }
-
-  getUserIndexById(userId: string): number {
-    return this.users.findIndex((obj: { id: string }) => obj.id === userId)
+  async updateDelivery(deliveries: UpdateUserDeliveriesDto) {
+    await pg.query<UserDto>(UPDATE_EMPLOYEE_DELIVERIES_TABLE_QUERY, deliveries)
   }
-  getUserById(userId: string): CreateUserDto {
-    return this.users[this.getUserIndexById(userId)]
+  async updateInformation(information: UpdateUserInformationDto) {
+    await pg.query<UserDto>(UPDATE_EMPLOYEE_IFORMATION_TABLE_QUERY, information)
   }
-  setUserFields(id: string, user: PatchUserDto, fields: string[]): void {
-    const currentUser = this.getUserById(id)
-    fields.map((field) => field in user && (currentUser[field] = user[field]))
+  async updateMonths(months: UpdateUserMonthsDto) {
+    await pg.query<UserDto>(UPDATE_EMPLOYEE_DATE_TABLE_QUERY, months)
   }
 }
 
